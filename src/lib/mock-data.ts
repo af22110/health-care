@@ -32,40 +32,44 @@ const generateSensorData = (baseTime: Date, seed: number) => {
   return data;
 };
 
-const now = new Date();
-const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+function createMockPatients(): Patient[] {
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-export const mockPatients: Patient[] = [
-  {
-    id: "pat1",
-    name: "John Doe",
-    age: 72,
-    avatarUrl: "https://picsum.photos/100/100?random=1",
-    medicalHistory: "History of hypertension and had a mild stroke 2 years ago. Currently on medication for blood pressure.",
-    sensorData: generateSensorData(yesterday, 1),
-  },
-  {
-    id: "pat2",
-    name: "Jane Smith",
-    age: 65,
-    avatarUrl: "https://picsum.photos/100/100?random=2",
-    medicalHistory: "Diabetic (Type 2) and has asthma. Uses an inhaler as needed. Generally stable.",
-    sensorData: generateSensorData(new Date(yesterday.getTime() + 60 * 60 * 1000), 2),
-  },
-  {
-    id: "pat3",
-    name: "Robert Johnson",
-    age: 80,
-    avatarUrl: "https://picsum.photos/100/100?random=3",
-    medicalHistory: "Recovering from hip replacement surgery. Limited mobility. History of atrial fibrillation.",
-    sensorData: generateSensorData(new Date(yesterday.getTime() + 2 * 60 * 60 * 1000), 3),
-  },
-  {
-    id: "pat4",
-    name: "Emily White",
-    age: 76,
-    avatarUrl: "https://picsum.photos/100/100?random=4",
-    medicalHistory: "Early-stage dementia patient. Experiences periods of confusion. Otherwise physically healthy.",
-    sensorData: generateSensorData(new Date(yesterday.getTime() + 3 * 60 * 60 * 1000), 4),
-  },
-];
+    return [
+      {
+        id: "pat1",
+        name: "John Doe",
+        age: 72,
+        avatarUrl: "https://picsum.photos/100/100?random=1",
+        medicalHistory: "History of hypertension and had a mild stroke 2 years ago. Currently on medication for blood pressure.",
+        sensorData: generateSensorData(yesterday, 1),
+      },
+      {
+        id: "pat2",
+        name: "Jane Smith",
+        age: 65,
+        avatarUrl: "https://picsum.photos/100/100?random=2",
+        medicalHistory: "Diabetic (Type 2) and has asthma. Uses an inhaler as needed. Generally stable.",
+        sensorData: generateSensorData(new Date(yesterday.getTime() + 60 * 60 * 1000), 2),
+      },
+      {
+        id: "pat3",
+        name: "Robert Johnson",
+        age: 80,
+        avatarUrl: "https://picsum.photos/100/100?random=3",
+        medicalHistory: "Recovering from hip replacement surgery. Limited mobility. History of atrial fibrillation.",
+        sensorData: generateSensorData(new Date(yesterday.getTime() + 2 * 60 * 60 * 1000), 3),
+      },
+      {
+        id: "pat4",
+        name: "Emily White",
+        age: 76,
+        avatarUrl: "https://picsum.photos/100/100?random=4",
+        medicalHistory: "Early-stage dementia patient. Experiences periods of confusion. Otherwise physically healthy.",
+        sensorData: generateSensorData(new Date(yesterday.getTime() + 3 * 60 * 60 * 1000), 4),
+      },
+    ];
+}
+
+export const mockPatients: Patient[] = createMockPatients();
