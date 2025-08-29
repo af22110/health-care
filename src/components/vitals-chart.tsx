@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   CartesianGrid,
   Line,
@@ -42,10 +43,10 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
     timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   }));
 
-  const yDomain = [
+  const yDomain = React.useMemo(() => [
     (dataMin: number) => Math.floor(dataMin * 0.9),
     (dataMax: number) => Math.ceil(dataMax * 1.1),
-  ];
+  ], []);
 
 
   return (
