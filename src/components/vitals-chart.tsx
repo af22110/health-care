@@ -30,23 +30,32 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
     },
   };
 
-  if (!data || data.length === 0) {
+  const formattedData = React.useMemo(() => {
+    if (!data) return [];
+    return data.map(item => ({
+    ...item,
+    timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  }))
+  }
+, [data]);
+
+  const yDomain = React.useMemo(() => {
+    if (!data || data.length === 0) {
+      return [0, 100]; // Default domain when no data
+    }
+    return [
+      (dataMin: number) => Math.floor(dataMin * 0.9),
+      (dataMax: number) => Math.ceil(dataMax * 1.1),
+    ];
+  }, [data]);
+
+  if (!formattedData || formattedData.length === 0) {
     return (
       <div className="flex h-[250px] w-full items-center justify-center">
         <p className="text-muted-foreground">No data available.</p>
       </div>
     );
   }
-
-  const formattedData = data.map(item => ({
-    ...item,
-    timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-  }));
-
-  const yDomain = React.useMemo(() => [
-    (dataMin: number) => Math.floor(dataMin * 0.9),
-    (dataMax: number) => Math.ceil(dataMax * 1.1),
-  ], []);
 
 
   return (
