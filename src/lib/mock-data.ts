@@ -1,20 +1,24 @@
 import type { Patient } from "./types";
+import { randomBytes } from "crypto";
 
 const generateSensorData = (baseTime: Date) => {
   const data = [];
+  const randomValues = Array.from(randomBytes(48 * 4), (byte) => byte / 255);
+  let randomIndex = 0;
+
   for (let i = 0; i < 48; i++) {
     const timestamp = new Date(baseTime.getTime() + i * 30 * 60 * 1000); // Every 30 minutes
-    const heartRate = 60 + Math.random() * 20;
+    const heartRate = 60 + randomValues[randomIndex++] * 20;
     // Introduce an anomaly
     const heartRateWithAnomaly = i > 30 && i < 35 ? heartRate + 60 : heartRate;
     
     data.push({
       timestamp: timestamp.toISOString(),
-      temperature: 97.5 + Math.random() * 2,
-      humidity: 40 + Math.random() * 10,
+      temperature: 97.5 + randomValues[randomIndex++] * 2,
+      humidity: 40 + randomValues[randomIndex++] * 10,
       heartRate: Math.round(heartRateWithAnomaly),
-      movement: Math.random() > 0.2 ? "active" : "still",
-      facialAnalysis: Math.random() > 0.1 ? "neutral" : "distressed",
+      movement: randomValues[randomIndex++] > 0.2 ? "active" : "still",
+      facialAnalysis: randomValues[randomIndex++] > 0.1 ? "neutral" : "distressed",
     });
   }
   return data;
