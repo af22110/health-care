@@ -9,7 +9,7 @@ export const mockPatients: Patient[] = [
     medicalHistory: "History of hypertension and had a mild stroke 2 years ago. Currently on medication for blood pressure.",
     sensorData: [
       {
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        timestamp: "2024-07-29T18:00:00.000Z",
         temperature: 98.6,
         humidity: 45,
         heartRate: 75,
@@ -17,7 +17,7 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       },
       {
-        timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+        timestamp: "2024-07-29T20:00:00.000Z",
         temperature: 98.7,
         humidity: 46,
         heartRate: 78,
@@ -25,10 +25,10 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       },
       {
-        timestamp: new Date().toISOString(),
+        timestamp: "2024-07-29T22:00:00.000Z",
         temperature: 99.5,
         humidity: 45,
-        heartRate: 130,
+        heartRate: 135,
         movement: "still",
         facialAnalysis: "distressed",
       }
@@ -42,7 +42,7 @@ export const mockPatients: Patient[] = [
     medicalHistory: "Diabetic (Type 2) and has asthma. Uses an inhaler as needed. Generally stable.",
     sensorData: [
        {
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        timestamp: "2024-07-29T18:00:00.000Z",
         temperature: 98.2,
         humidity: 50,
         heartRate: 68,
@@ -50,7 +50,7 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       },
       {
-        timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+        timestamp: "2024-07-29T20:00:00.000Z",
         temperature: 98.3,
         humidity: 51,
         heartRate: 70,
@@ -58,7 +58,7 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       },
       {
-        timestamp: new Date().toISOString(),
+        timestamp: "2024-07-29T22:00:00.000Z",
         temperature: 98.4,
         humidity: 50,
         heartRate: 72,
@@ -75,7 +75,7 @@ export const mockPatients: Patient[] = [
     medicalHistory: "Recovering from hip replacement surgery. Limited mobility. History of atrial fibrillation.",
     sensorData: [
       {
-        timestamp: new Date().toISOString(),
+        timestamp: "2024-07-29T22:00:00.000Z",
         temperature: 98.8,
         humidity: 48,
         heartRate: 85,
@@ -92,7 +92,7 @@ export const mockPatients: Patient[] = [
     medicalHistory: "Early-stage dementia patient. Experiences periods of confusion. Otherwise physically healthy.",
     sensorData: [
       {
-        timestamp: new Date().toISOString(),
+        timestamp: "2024-07-29T22:00:00.000Z",
         temperature: 98.5,
         humidity: 47,
         heartRate: 80,
