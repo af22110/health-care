@@ -29,10 +29,24 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
     },
   };
 
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex h-[250px] w-full items-center justify-center">
+        <p className="text-muted-foreground">No data available.</p>
+      </div>
+    );
+  }
+
   const formattedData = data.map(item => ({
     ...item,
     timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   }));
+
+  const yDomain = [
+    (dataMin: number) => Math.floor(dataMin * 0.9),
+    (dataMax: number) => Math.ceil(dataMax * 1.1),
+  ];
+
 
   return (
     <ChartContainer config={chartConfig} className="h-[250px] w-full">
@@ -45,7 +59,7 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
           tickMargin={8}
           tickFormatter={(value, index) => {
             // Show every Nth tick to prevent overlap
-            const N = Math.floor(data.length / 5);
+            const N = Math.floor(data.length / 5) || 1;
             return index % N === 0 ? value : '';
           }}
         />
@@ -53,7 +67,7 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          domain={['dataMin - 10', 'dataMax + 10']}
+          domain={yDomain}
         />
         <Tooltip
           cursor={false}

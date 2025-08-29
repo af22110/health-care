@@ -131,7 +131,7 @@ export function AIPanel({ patient }: AIPanelProps) {
                   variant={
                     anomaly.isAnomalous ? "destructive" : "default"
                   }
-                  className={!anomaly.isAnomalous ? "bg-green-500 text-white" : ""}
+                  className={!anomaly.isAnomalous ? "bg-[hsl(var(--chart-3))] text-white" : ""}
                 >
                   {anomaly.isAnomalous ? "Anomaly Detected" : "Normal"}
                 </Badge>
