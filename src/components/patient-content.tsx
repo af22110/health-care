@@ -5,7 +5,6 @@ import {
   Activity,
   Droplets,
   HeartPulse,
-  Smile,
   Thermometer,
 } from "lucide-react";
 import React from "react";
@@ -14,31 +13,70 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
-import type { Patient } from "@/lib/types";
+import type { AnalyzedSensorData, Patient } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MessagingPanel } from "./messaging-panel";
+import { Loader2 } from "lucide-react";
 
 interface PatientContentProps {
   patient: Patient;
+  analyzedData: AnalyzedSensorData | null;
+  isLoading: boolean;
 }
 
 function fahrenheitToCelsius(fahrenheit: number): number {
   return ((fahrenheit - 32) * 5) / 9;
 }
 
-export function PatientContent({ patient }: PatientContentProps) {
-  const latestData = patient.sensorData[patient.sensorData.length - 1];
-
-  const isAnomalous = latestData?.isAnomalous ?? false;
-  const anomalyExplanation = latestData?.anomalyExplanation.toLowerCase() ?? "";
+export function PatientContent({ patient, analyzedData, isLoading }: PatientContentProps) {
+  
+  const isAnomalous = analyzedData?.isAnomalous ?? false;
+  const anomalyExplanation = analyzedData?.anomalyExplanation.toLowerCase() ?? "";
 
   const isAnomalousMetric = (metric: string): boolean => {
     if (!isAnomalous) return false;
     return anomalyExplanation.includes(metric.toLowerCase());
   };
   
-  const tempF = latestData?.temperature ?? 0;
+  const tempF = analyzedData?.temperature ?? 0;
   const tempC = fahrenheitToCelsius(tempF);
+
+  const latestDataForCards = analyzedData ?? patient.sensorData[patient.sensorData.length - 1]
+
+  const MetricCard = ({
+    title,
+    metric,
+    value,
+    unit,
+    icon: Icon,
+  }: {
+    title: string;
+    metric: string;
+    value: string | number;
+    unit: string;
+    icon: React.ElementType;
+  }) => (
+    <Card
+      className={cn(
+        isAnomalousMetric(metric) && "bg-destructive/10 border-destructive"
+      )}
+    >
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Loader2 className="h-6 w-6 animate-spin" />
+        ) : (
+          <div className="text-2xl font-bold">
+            {value} {unit}
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">Latest reading</p>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <Tabs defaultValue="overview" className="w-full">
@@ -70,100 +108,36 @@ export function PatientContent({ patient }: PatientContentProps) {
               </p>
             </CardContent>
           </Card>
-          <Card
-            className={cn(
-              isAnomalousMetric("heart rate") &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Heart Rate</CardTitle>
-              <HeartPulse className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {latestData?.heartRate ?? "N/A"} bpm
-              </div>
-              <p className="text-xs text-muted-foreground">Latest reading</p>
-            </CardContent>
-          </Card>
-           <Card
-            className={cn(
-              isAnomalousMetric("temperature") &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Temperature
-              </CardTitle>
-              <Thermometer className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {tempC.toFixed(1) ?? "N/A"} °C
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Body Temperature
-              </p>
-            </CardContent>
-          </Card>
-          <Card
-            className={cn(
-              isAnomalousMetric("humidity") &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Humidity</CardTitle>
-              <Droplets className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {latestData?.humidity ?? "N/A"}%
-              </div>
-              <p className="text-xs text-muted-foreground">Ambient Humidity</p>
-            </CardContent>
-          </Card>
-          <Card
-            className={cn(
-              (isAnomalousMetric("facial") || isAnomalousMetric("expression")) &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Facial Analysis
-              </CardTitle>
-              <Smile className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold capitalize">
-                {latestData?.facialAnalysis ?? "N/A"}
-              </div>
-              <p className="text-xs text-muted-foreground">Latest reading</p>
-            </CardContent>
-          </Card>
-          <Card
-            className={cn(
-              isAnomalousMetric("movement") &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Movement
-              </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold capitalize">
-                {latestData?.movement ?? "N/A"}
-              </div>
-              <p className="text-xs text-muted-foreground">Latest reading</p>
-            </CardContent>
-          </Card>
-
+          
+          <MetricCard
+            title="Heart Rate"
+            metric="heart rate"
+            value={latestDataForCards?.heartRate ?? "N/A"}
+            unit="bpm"
+            icon={HeartPulse}
+          />
+          <MetricCard
+            title="Temperature"
+            metric="temperature"
+            value={tempC.toFixed(1) ?? "N/A"}
+            unit="°C"
+            icon={Thermometer}
+          />
+          <MetricCard
+            title="Humidity"
+            metric="humidity"
+            value={latestDataForCards?.humidity ?? "N/A"}
+            unit="%"
+            icon={Droplets}
+          />
+           <MetricCard
+            title="Movement"
+            metric="movement"
+            value={latestDataForCards?.movement ?? "N/A"}
+            unit=""
+            icon={Activity}
+          />
+          
           <Card className="md:col-span-2 lg:col-span-4">
             <CardHeader>
               <CardTitle>Heart Rate (Last 24 Hours)</CardTitle>
@@ -223,7 +197,7 @@ export function PatientContent({ patient }: PatientContentProps) {
         <MessagingPanel patient={patient} currentUser="doctor" />
       </TabsContent>
       <TabsContent value="ai">
-        <AIPanel latestData={latestData} />
+        <AIPanel latestData={analyzedData} />
       </TabsContent>
     </Tabs>
   );

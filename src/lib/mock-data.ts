@@ -1,4 +1,100 @@
-import type { Patient } from "./types";
+import type { Patient, SensorData } from "./types";
+
+interface RawSensorData {
+  date: string;
+  time: string;
+  temperature: number;
+  humidity: number;
+  pulse: number;
+  motion: string;
+}
+
+const rawSensorDataPat1: RawSensorData[] = [
+  {
+    date: "2024-07-29",
+    time: "18:00:00",
+    temperature: 98.6,
+    humidity: 45,
+    pulse: 75,
+    motion: "active",
+  },
+  {
+    date: "2024-07-29",
+    time: "20:00:00",
+    temperature: 98.7,
+    humidity: 46,
+    pulse: 78,
+    motion: "still",
+  },
+  {
+    date: "2024-07-29",
+    time: "22:00:00",
+    temperature: 99.5,
+    humidity: 45,
+    pulse: 135,
+    motion: "still",
+  },
+];
+
+const rawSensorDataPat2: RawSensorData[] = [
+  {
+    date: "2024-07-29",
+    time: "18:00:00",
+    temperature: 98.2,
+    humidity: 50,
+    pulse: 68,
+    motion: "active",
+  },
+  {
+    date: "2024-07-29",
+    time: "20:00:00",
+    temperature: 98.3,
+    humidity: 51,
+    pulse: 70,
+    motion: "active",
+  },
+  {
+    date: "2024-07-29",
+    time: "22:00:00",
+    temperature: 98.4,
+    humidity: 50,
+    pulse: 72,
+    motion: "still",
+  },
+];
+
+const rawSensorDataPat3: RawSensorData[] = [
+    {
+    date: "2024-07-29",
+    time: "22:00:00",
+    temperature: 98.8,
+    humidity: 48,
+    pulse: 85,
+    motion: "limited",
+  }
+];
+
+const rawSensorDataPat4: RawSensorData[] = [
+    {
+    date: "2024-07-29",
+    time: "22:00:00",
+    temperature: 98.5,
+    humidity: 47,
+    pulse: 80,
+    motion: "still",
+  }
+];
+
+
+const processRawData = (rawData: RawSensorData[]): SensorData[] => {
+  return rawData.map(d => ({
+    timestamp: `${d.date}T${d.time}.000Z`,
+    temperature: d.temperature,
+    humidity: d.humidity,
+    heartRate: d.pulse,
+    movement: d.motion,
+  }));
+};
 
 export const mockPatients: Patient[] = [
   {
@@ -7,41 +103,7 @@ export const mockPatients: Patient[] = [
     age: 72,
     avatarUrl: "https://picsum.photos/100/100?random=1",
     medicalHistory: "History of hypertension and had a mild stroke 2 years ago. Currently on medication for blood pressure.",
-    sensorData: [
-      {
-        timestamp: "2024-07-29T18:00:00.000Z",
-        temperature: 98.6,
-        humidity: 45,
-        heartRate: 75,
-        movement: "active",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      },
-      {
-        timestamp: "2024-07-29T20:00:00.000Z",
-        temperature: 98.7,
-        humidity: 46,
-        heartRate: 78,
-        movement: "still",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      },
-      {
-        timestamp: "2024-07-29T22:00:00.000Z",
-        temperature: 99.5,
-        humidity: 45,
-        heartRate: 135,
-        movement: "still",
-        facialAnalysis: "distressed",
-        isAnomalous: true,
-        anomalyExplanation: "High heart rate (135 bpm) and 'distressed' facial analysis indicate a potential issue.",
-        criticality: "high",
-      }
-    ],
+    sensorData: processRawData(rawSensorDataPat1),
     messages: [
         {
             id: 'msg1',
@@ -63,41 +125,7 @@ export const mockPatients: Patient[] = [
     age: 65,
     avatarUrl: "https://picsum.photos/100/100?random=2",
     medicalHistory: "Diabetic (Type 2) and has asthma. Uses an inhaler as needed. Generally stable.",
-    sensorData: [
-       {
-        timestamp: "2024-07-29T18:00:00.000Z",
-        temperature: 98.2,
-        humidity: 50,
-        heartRate: 68,
-        movement: "active",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      },
-      {
-        timestamp: "2024-07-29T20:00:00.000Z",
-        temperature: 98.3,
-        humidity: 51,
-        heartRate: 70,
-        movement: "active",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      },
-      {
-        timestamp: "2024-07-29T22:00:00.000Z",
-        temperature: 98.4,
-        humidity: 50,
-        heartRate: 72,
-        movement: "still",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      }
-    ],
+    sensorData: processRawData(rawSensorDataPat2),
     messages: [
         {
             id: 'msg3',
@@ -113,19 +141,7 @@ export const mockPatients: Patient[] = [
     age: 80,
     avatarUrl: "https://picsum.photos/100/100?random=3",
     medicalHistory: "Recovering from hip replacement surgery. Limited mobility. History of atrial fibrillation.",
-    sensorData: [
-      {
-        timestamp: "2024-07-29T22:00:00.000Z",
-        temperature: 98.8,
-        humidity: 48,
-        heartRate: 85,
-        movement: "limited",
-        facialAnalysis: "neutral",
-        isAnomalous: false,
-        anomalyExplanation: "All vitals are within normal ranges.",
-        criticality: "low",
-      }
-    ],
+    sensorData: processRawData(rawSensorDataPat3),
     messages: []
   },
   {
@@ -134,19 +150,7 @@ export const mockPatients: Patient[] = [
     age: 76,
     avatarUrl: "https://picsum.photos/100/100?random=4",
     medicalHistory: "Early-stage dementia patient. Experiences periods of confusion. Otherwise physically healthy.",
-    sensorData: [
-      {
-        timestamp: "2024-07-29T22:00:00.000Z",
-        temperature: 98.5,
-        humidity: 47,
-        heartRate: 80,
-        movement: "still",
-        facialAnalysis: "confused",
-        isAnomalous: true,
-        anomalyExplanation: "'Confused' facial analysis may require attention.",
-        criticality: "medium",
-      }
-    ],
+    sensorData: processRawData(rawSensorDataPat4),
     messages: []
   },
 ];

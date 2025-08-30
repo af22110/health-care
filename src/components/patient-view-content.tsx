@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -13,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
-import type { Patient } from "@/lib/types";
+import type { SensorData, Patient, AnalyzedSensorData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MessagingPanel } from "./messaging-panel";
 
@@ -27,7 +28,13 @@ function fahrenheitToCelsius(fahrenheit: number): number {
 
 
 export function PatientViewContent({ patient }: PatientViewContentProps) {
-  const latestData = patient.sensorData[patient.sensorData.length - 1];
+  // In a real app, this would come from an API call that includes AI analysis
+  const latestData: AnalyzedSensorData = {
+    ...patient.sensorData[patient.sensorData.length - 1],
+    isAnomalous: false, // Default to false for patient view for now
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low",
+  };
 
   const isAnomalous = latestData?.isAnomalous ?? false;
   const anomalyExplanation = latestData?.anomalyExplanation.toLowerCase() ?? "";
@@ -125,25 +132,7 @@ export function PatientViewContent({ patient }: PatientViewContentProps) {
               <p className="text-xs text-muted-foreground">Ambient Humidity</p>
             </CardContent>
           </Card>
-          <Card
-            className={cn(
-              (isAnomalousMetric("facial") || isAnomalousMetric("expression")) &&
-                "bg-destructive/10 border-destructive"
-            )}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Facial Analysis
-              </CardTitle>
-              <Smile className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold capitalize">
-                {latestData?.facialAnalysis ?? "N/A"}
-              </div>
-              <p className="text-xs text-muted-foreground">Latest reading</p>
-            </CardContent>
-          </Card>
+          
            <Card
             className={cn(
               isAnomalousMetric("movement") &&

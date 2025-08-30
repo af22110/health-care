@@ -4,7 +4,10 @@ export interface SensorData {
   humidity: number;
   heartRate: number;
   movement: string;
-  facialAnalysis: string;
+  facialAnalysis?: string; // This is now optional as it's not in the new format
+}
+
+export interface AnalyzedSensorData extends SensorData {
   isAnomalous: boolean;
   anomalyExplanation: string;
   criticality: 'low' | 'medium' | 'high' | string;
@@ -18,7 +21,7 @@ export interface Message {
 }
 
 export interface Patient {
-  id:string;
+  id: string;
   name: string;
   age: number;
   avatarUrl: string;

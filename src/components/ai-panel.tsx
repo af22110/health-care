@@ -1,6 +1,7 @@
+
 "use client";
 
-import type { SensorData } from "@/lib/types";
+import type { AnalyzedSensorData } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import React from "react";
 import { Badge } from "./ui/badge";
@@ -8,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
 
 interface AIPanelProps {
-  latestData: SensorData | null;
+  latestData: AnalyzedSensorData | null;
 }
 
 export function AIPanel({ latestData }: AIPanelProps) {
