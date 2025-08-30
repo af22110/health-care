@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  Activity,
   Droplets,
   HeartPulse,
-  MessageSquare,
   Smile,
   Thermometer,
 } from "lucide-react";
@@ -13,24 +13,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
-import type { Anomaly, Patient } from "@/lib/types";
+import type { Patient } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MessagingPanel } from "./messaging-panel";
 
 interface PatientViewContentProps {
   patient: Patient;
-  anomaly: Anomaly | null;
-  isAnomalyPending: boolean;
 }
 
-export function PatientViewContent({ patient, anomaly, isAnomalyPending }: PatientViewContentProps) {
+function fahrenheitToCelsius(fahrenheit: number): number {
+  return ((fahrenheit - 32) * 5) / 9;
+}
+
+
+export function PatientViewContent({ patient }: PatientViewContentProps) {
   const latestData = patient.sensorData[patient.sensorData.length - 1];
 
+  const isAnomalous = latestData?.isAnomalous ?? false;
+  const anomalyExplanation = latestData?.anomalyExplanation.toLowerCase() ?? "";
+
   const isAnomalousMetric = (metric: string): boolean => {
-    if (!anomaly || !anomaly.isAnomalous) return false;
-    const explanation = anomaly.anomalyExplanation.toLowerCase();
-    return explanation.includes(metric.toLowerCase());
+    if (!isAnomalous) return false;
+    return anomalyExplanation.includes(metric.toLowerCase());
   };
+
+  const tempF = latestData?.temperature ?? 0;
+  const tempC = fahrenheitToCelsius(tempF);
 
   return (
     <Tabs defaultValue="overview" className="w-full">
@@ -79,7 +87,7 @@ export function PatientViewContent({ patient, anomaly, isAnomalyPending }: Patie
               <p className="text-xs text-muted-foreground">Latest reading</p>
             </CardContent>
           </Card>
-          <Card
+           <Card
             className={cn(
               isAnomalousMetric("temperature") &&
                 "bg-destructive/10 border-destructive"
@@ -87,13 +95,34 @@ export function PatientViewContent({ patient, anomaly, isAnomalyPending }: Patie
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Temperature
+                Temperature (F)
               </CardTitle>
               <Thermometer className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {latestData?.temperature ?? "N/A"} °F
+                {tempF.toFixed(1) ?? "N/A"} °F
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Body Temperature
+              </p>
+            </CardContent>
+          </Card>
+           <Card
+            className={cn(
+              isAnomalousMetric("temperature") &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Temperature (C)
+              </CardTitle>
+              <Thermometer className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {tempC.toFixed(1) ?? "N/A"} °C
               </div>
               <p className="text-xs text-muted-foreground">
                 Body Temperature
@@ -132,6 +161,25 @@ export function PatientViewContent({ patient, anomaly, isAnomalyPending }: Patie
             <CardContent>
               <div className="text-2xl font-bold capitalize">
                 {latestData?.facialAnalysis ?? "N/A"}
+              </div>
+              <p className="text-xs text-muted-foreground">Latest reading</p>
+            </CardContent>
+          </Card>
+           <Card
+            className={cn(
+              isAnomalousMetric("movement") &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Movement
+              </CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold capitalize">
+                {latestData?.movement ?? "N/A"}
               </div>
               <p className="text-xs text-muted-foreground">Latest reading</p>
             </CardContent>
@@ -194,7 +242,7 @@ export function PatientViewContent({ patient, anomaly, isAnomalyPending }: Patie
         <MessagingPanel patient={patient} currentUser="patient" />
       </TabsContent>
       <TabsContent value="ai">
-        <AIPanel patient={patient} anomaly={anomaly} isAnomalyPending={isAnomalyPending} />
+        <AIPanel latestData={latestData} />
       </TabsContent>
     </Tabs>
   );

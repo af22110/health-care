@@ -5,6 +5,9 @@ export interface SensorData {
   heartRate: number;
   movement: string;
   facialAnalysis: string;
+  isAnomalous: boolean;
+  anomalyExplanation: string;
+  criticality: 'low' | 'medium' | 'high' | string;
 }
 
 export interface Message {
@@ -15,17 +18,11 @@ export interface Message {
 }
 
 export interface Patient {
-  id: string;
+  id:string;
   name: string;
   age: number;
   avatarUrl: string;
   medicalHistory: string;
   sensorData: SensorData[];
   messages: Message[];
-}
-
-export interface Anomaly {
-  isAnomalous: boolean;
-  anomalyExplanation: string;
-  criticality: 'low' | 'medium' | 'high' | string;
 }

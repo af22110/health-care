@@ -12,47 +12,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { mockPatients } from "@/lib/mock-data";
 import { Settings, User } from "lucide-react";
-import React, { useMemo, useState, useTransition, useEffect } from "react";
+import React, { useMemo } from "react";
 import { GuardianAngelLogo } from "@/components/icons";
-import type { Anomaly, Patient } from "@/lib/types";
-import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies";
-import { useToast } from "@/hooks/use-toast";
+import type { Patient } from "@/lib/types";
 import { PatientViewContent } from "@/components/patient-view-content";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 export default function PatientViewPage() {
-  const { toast } = useToast();
-  const [isAnomalyPending, startAnomalyTransition] = useTransition();
-  const [anomaly, setAnomaly] = useState<Anomaly | null>(null);
-
   // For this example, we'll use the first patient.
   // In a real app, you'd get the logged-in patient's data.
   const patient = useMemo<Patient | null>(() => mockPatients[0] ?? null, []);
-
-  useEffect(() => {
-    const handleAnalyzeAnomaly = () => {
-      if (!patient) return;
-      const latestData = patient.sensorData[patient.sensorData.length - 1];
-      if (!latestData) return;
-
-      startAnomalyTransition(async () => {
-        setAnomaly(null);
-        try {
-          const result = await analyzeSensorData(latestData);
-          setAnomaly(result);
-        } catch (error) {
-          console.error("Error analyzing sensor data:", error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to analyze sensor data for anomalies.",
-          });
-        }
-      });
-    };
-    handleAnalyzeAnomaly();
-  }, [patient, toast]);
 
   if (!patient) {
     return (
@@ -114,7 +84,7 @@ export default function PatientViewPage() {
         </div>
       </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">
-            <PatientViewContent patient={patient} anomaly={anomaly} isAnomalyPending={isAnomalyPending} />
+            <PatientViewContent patient={patient} />
         </main>
     </div>
   );

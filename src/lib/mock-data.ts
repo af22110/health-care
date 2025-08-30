@@ -15,6 +15,9 @@ export const mockPatients: Patient[] = [
         heartRate: 75,
         movement: "active",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       },
       {
         timestamp: "2024-07-29T20:00:00.000Z",
@@ -23,6 +26,9 @@ export const mockPatients: Patient[] = [
         heartRate: 78,
         movement: "still",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       },
       {
         timestamp: "2024-07-29T22:00:00.000Z",
@@ -31,6 +37,9 @@ export const mockPatients: Patient[] = [
         heartRate: 135,
         movement: "still",
         facialAnalysis: "distressed",
+        isAnomalous: true,
+        anomalyExplanation: "High heart rate (135 bpm) and 'distressed' facial analysis indicate a potential issue.",
+        criticality: "high",
       }
     ],
     messages: [
@@ -62,6 +71,9 @@ export const mockPatients: Patient[] = [
         heartRate: 68,
         movement: "active",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       },
       {
         timestamp: "2024-07-29T20:00:00.000Z",
@@ -70,6 +82,9 @@ export const mockPatients: Patient[] = [
         heartRate: 70,
         movement: "active",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       },
       {
         timestamp: "2024-07-29T22:00:00.000Z",
@@ -78,6 +93,9 @@ export const mockPatients: Patient[] = [
         heartRate: 72,
         movement: "still",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       }
     ],
     messages: [
@@ -103,6 +121,9 @@ export const mockPatients: Patient[] = [
         heartRate: 85,
         movement: "limited",
         facialAnalysis: "neutral",
+        isAnomalous: false,
+        anomalyExplanation: "All vitals are within normal ranges.",
+        criticality: "low",
       }
     ],
     messages: []
@@ -121,6 +142,9 @@ export const mockPatients: Patient[] = [
         heartRate: 80,
         movement: "still",
         facialAnalysis: "confused",
+        isAnomalous: true,
+        anomalyExplanation: "'Confused' facial analysis may require attention.",
+        criticality: "medium",
       }
     ],
     messages: []
