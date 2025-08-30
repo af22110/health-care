@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ export default function PatientViewPage() {
         <div className="flex items-center gap-2">
             <GuardianAngelLogo className="size-8 text-primary" />
             <h1 className="text-xl font-semibold font-headline">
-              Guardian Angel
+              Guardian Angel (Patient)
             </h1>
         </div>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
