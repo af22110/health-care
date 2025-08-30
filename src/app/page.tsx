@@ -7,12 +7,6 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -35,18 +29,50 @@ import {
 import { mockPatients } from "@/lib/mock-data";
 import type { Patient } from "@/lib/types";
 import { Bell, Search, Settings, User } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useTransition, useEffect } from "react";
 import { GuardianAngelLogo } from "@/components/icons";
 import { PatientContent } from "@/components/patient-content";
+import type { Anomaly } from "@/lib/types";
+import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardPage() {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     mockPatients[0]?.id ?? null
   );
 
+  const { toast } = useToast();
+  const [isAnomalyPending, startAnomalyTransition] = useTransition();
+  const [anomaly, setAnomaly] = useState<Anomaly | null>(null);
+
   const selectedPatient = useMemo<Patient | null>(() => {
     return mockPatients.find((p) => p.id === selectedPatientId) ?? null;
   }, [selectedPatientId]);
+
+  useEffect(() => {
+    const handleAnalyzeAnomaly = () => {
+      if (!selectedPatient) return;
+      const latestData = selectedPatient.sensorData[selectedPatient.sensorData.length - 1];
+      if (!latestData) return;
+
+      startAnomalyTransition(async () => {
+        setAnomaly(null);
+        try {
+          const result = await analyzeSensorData(latestData);
+          setAnomaly(result);
+        } catch (error) {
+          console.error("Error analyzing sensor data:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to analyze sensor data for anomalies.",
+          });
+        }
+      });
+    };
+    handleAnalyzeAnomaly();
+  }, [selectedPatient, toast]);
+
 
   return (
     <SidebarProvider>
@@ -139,7 +165,7 @@ export default function DashboardPage() {
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {selectedPatient ? (
-            <PatientContent patient={selectedPatient} />
+            <PatientContent patient={selectedPatient} anomaly={anomaly} isAnomalyPending={isAnomalyPending} />
           ) : (
             <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
               <div className="flex flex-col items-center gap-1 text-center">

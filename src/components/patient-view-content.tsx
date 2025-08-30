@@ -15,13 +15,13 @@ import { VitalsChart } from "./vitals-chart";
 import type { Anomaly, Patient } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-interface PatientContentProps {
+interface PatientViewContentProps {
   patient: Patient;
   anomaly: Anomaly | null;
   isAnomalyPending: boolean;
 }
 
-export function PatientContent({ patient, anomaly, isAnomalyPending }: PatientContentProps) {
+export function PatientViewContent({ patient, anomaly, isAnomalyPending }: PatientViewContentProps) {
   const latestData = patient.sensorData[patient.sensorData.length - 1];
 
   const isAnomalousMetric = (metric: string): boolean => {
@@ -33,8 +33,8 @@ export function PatientContent({ patient, anomaly, isAnomalyPending }: PatientCo
   return (
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="vitals">Vitals History</TabsTrigger>
+        <TabsTrigger value="overview">My Health Overview</TabsTrigger>
+        <TabsTrigger value="vitals">My Vitals History</TabsTrigger>
         <TabsTrigger value="ai">AI Analysis</TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
@@ -53,7 +53,7 @@ export function PatientContent({ patient, anomaly, isAnomalyPending }: PatientCo
               </div>
             </CardHeader>
             <CardContent>
-              <h4 className="font-semibold mb-1">Medical History</h4>
+              <h4 className="font-semibold mb-1">My Medical History</h4>
               <p className="text-sm text-muted-foreground">
                 {patient.medicalHistory}
               </p>
