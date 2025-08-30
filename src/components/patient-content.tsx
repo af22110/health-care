@@ -1,9 +1,9 @@
+
 "use client";
 
 import {
   Droplets,
   HeartPulse,
-  MessageSquare,
   Smile,
   Thermometer,
 } from "lucide-react";

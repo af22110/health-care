@@ -19,6 +19,7 @@ import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies"
 import { useToast } from "@/hooks/use-toast";
 import { PatientViewContent } from "@/components/patient-view-content";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 export default function PatientViewPage() {
   const { toast } = useToast();
@@ -71,12 +72,12 @@ export default function PatientViewPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
        <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
             <GuardianAngelLogo className="size-8 text-primary" />
             <h1 className="text-xl font-semibold font-headline">
-              Guardian Angel (Patient)
+              Guardian Angel
             </h1>
-        </div>
+        </Link>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <div className="ml-auto flex-1 sm:flex-initial">
              <h1 className="text-lg font-semibold md:text-2xl text-end">
