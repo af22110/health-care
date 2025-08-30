@@ -20,9 +20,10 @@ interface VitalsChartProps {
   data: SensorData[];
   dataKey: keyof SensorData;
   strokeVar: string;
+  valueFormatter?: (value: number) => number;
 }
 
-export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
+export function VitalsChart({ data, dataKey, strokeVar, valueFormatter }: VitalsChartProps) {
   const chartConfig = {
     [dataKey]: {
       label: dataKey.charAt(0).toUpperCase() + dataKey.slice(1),
@@ -32,22 +33,37 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
 
   const formattedData = React.useMemo(() => {
     if (!data) return [];
-    return data.map(item => ({
-    ...item,
-    timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-  }))
+    return data.map(item => {
+      let value = item[dataKey];
+      if (typeof value === 'number' && valueFormatter) {
+        value = valueFormatter(value);
+      }
+      return {
+        ...item,
+        [dataKey]: value,
+        timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      }
+  })
   }
-, [data]);
+, [data, dataKey, valueFormatter]);
 
   const yDomain = React.useMemo(() => {
-    if (!data || data.length === 0) {
+    if (!formattedData || formattedData.length === 0) {
       return [0, 100]; // Default domain when no data
     }
+    
+    const values = formattedData.map(item => item[dataKey]).filter(v => typeof v === 'number') as number[];
+    if(values.length === 0) {
+      return [0, 100];
+    }
+    const dataMin = Math.min(...values);
+    const dataMax = Math.max(...values);
+    
     return [
-      (dataMin: number) => Math.floor(dataMin * 0.9),
-      (dataMax: number) => Math.ceil(dataMax * 1.1),
+      Math.floor(dataMin * 0.9),
+      Math.ceil(dataMax * 1.1),
     ];
-  }, [data]);
+  }, [formattedData, dataKey]);
 
   if (!formattedData || formattedData.length === 0) {
     return (
@@ -78,10 +94,11 @@ export function VitalsChart({ data, dataKey, strokeVar }: VitalsChartProps) {
           axisLine={false}
           tickMargin={8}
           domain={yDomain}
+          tickFormatter={(value) => typeof value === 'number' ? value.toFixed(0) : value}
         />
         <Tooltip
           cursor={false}
-          content={<ChartTooltipContent indicator="dot" />}
+          content={<ChartTooltipContent indicator="dot" formatter={(value) => typeof value === 'number' ? value.toFixed(1) : value} />}
         />
         <Line
           dataKey={dataKey}
