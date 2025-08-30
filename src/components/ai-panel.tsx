@@ -56,22 +56,19 @@ export function AIPanel({ patient, anomaly, isAnomalyPending }: AIPanelProps) {
           </Button>
         </CardHeader>
         <CardContent>
-          {isSummaryPending && (
+          {isSummaryPending ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          )}
-          {summary ? (
+          ) : summary ? (
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
               {summary}
             </p>
           ) : (
-            !isSummaryPending && (
-              <p className="text-sm text-muted-foreground">
-                Click "Generate Summary" to get an AI-powered overview of the
-                patient's current status and history.
-              </p>
-            )
+            <p className="text-sm text-muted-foreground">
+              Click "Generate Summary" to get an AI-powered overview of the
+              patient's current status and history.
+            </p>
           )}
         </CardContent>
       </Card>
@@ -80,12 +77,11 @@ export function AIPanel({ patient, anomaly, isAnomalyPending }: AIPanelProps) {
           <CardTitle>AI Anomaly Detection</CardTitle>
         </CardHeader>
         <CardContent>
-          {isAnomalyPending && (
+          {isAnomalyPending ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          )}
-          {anomaly ? (
+          ) : anomaly ? (
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold">Anomaly Status</h4>
@@ -123,11 +119,9 @@ export function AIPanel({ patient, anomaly, isAnomalyPending }: AIPanelProps) {
               </div>
             </div>
           ) : (
-            !isAnomalyPending && (
-              <p className="text-sm text-muted-foreground">
-                Patient data is being analyzed for anomalies...
-              </p>
-            )
+            <p className="text-sm text-muted-foreground">
+              No anomaly data available. Analysis runs automatically when you select a patient.
+            </p>
           )}
         </CardContent>
       </Card>
