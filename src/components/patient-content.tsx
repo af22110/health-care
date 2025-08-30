@@ -16,19 +16,17 @@ import { VitalsChart } from "./vitals-chart";
 import type { AnalyzedSensorData, Patient } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MessagingPanel } from "./messaging-panel";
-import { Loader2 } from "lucide-react";
 
 interface PatientContentProps {
   patient: Patient;
   analyzedData: AnalyzedSensorData | null;
-  isLoading: boolean;
 }
 
 function fahrenheitToCelsius(fahrenheit: number): number {
   return ((fahrenheit - 32) * 5) / 9;
 }
 
-export function PatientContent({ patient, analyzedData, isLoading }: PatientContentProps) {
+export function PatientContent({ patient, analyzedData }: PatientContentProps) {
   
   const isAnomalous = analyzedData?.isAnomalous ?? false;
   const anomalyExplanation = analyzedData?.anomalyExplanation.toLowerCase() ?? "";
@@ -66,13 +64,9 @@ export function PatientContent({ patient, analyzedData, isLoading }: PatientCont
         <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : (
-          <div className="text-2xl font-bold">
-            {value} {unit}
-          </div>
-        )}
+        <div className="text-2xl font-bold">
+          {value} {unit}
+        </div>
         <p className="text-xs text-muted-foreground">Latest reading</p>
       </CardContent>
     </Card>
@@ -116,10 +110,10 @@ export function PatientContent({ patient, analyzedData, isLoading }: PatientCont
             unit="bpm"
             icon={HeartPulse}
           />
-          <MetricCard
+           <MetricCard
             title="Temperature"
             metric="temperature"
-            value={tempC.toFixed(1) ?? "N/A"}
+            value={tempC.toFixed(1)}
             unit="°C"
             icon={Thermometer}
           />
@@ -175,7 +169,7 @@ export function PatientContent({ patient, analyzedData, isLoading }: PatientCont
                 data={patient.sensorData}
                 dataKey="temperature"
                 strokeVar="hsl(var(--chart-2))"
-                valueFormatter={fahrenheitToCelsius}
+                valueFormatter={(val) => fahrenheitToCelsius(val)}
               />
             </CardContent>
           </Card>

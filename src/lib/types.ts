@@ -1,10 +1,9 @@
 export interface SensorData {
   timestamp: string;
-  temperature: number;
+  temperature: number; // in Fahrenheit
   humidity: number;
   heartRate: number;
   movement: string;
-  facialAnalysis?: string; // This is now optional as it's not in the new format
 }
 
 export interface AnalyzedSensorData extends SensorData {
@@ -26,6 +25,6 @@ export interface Patient {
   age: number;
   avatarUrl: string;
   medicalHistory: string;
-  sensorData: SensorData[];
+  sensorData: AnalyzedSensorData[];
   messages: Message[];
 }

@@ -1,7 +1,6 @@
 
 "use client";
 
-import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies";
 import { GuardianAngelLogo } from "@/components/icons";
 import { PatientContent } from "@/components/patient-content";
 import {
@@ -34,62 +33,25 @@ import { mockPatients } from "@/lib/mock-data";
 import type { AnalyzedSensorData, Patient } from "@/lib/types";
 import { Bell, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import React, { useEffect, useMemo, useState } from "react";
 
 export default function DashboardPage() {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     mockPatients[0]?.id ?? null
   );
-  const [analyzedData, setAnalyzedData] = useState<AnalyzedSensorData | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   const selectedPatient = useMemo<Patient | null>(() => {
     return mockPatients.find((p) => p.id === selectedPatientId) ?? null;
   }, [selectedPatientId]);
-
-  const handleAnalysis = useCallback(async () => {
+  
+  const latestAnalyzedData = useMemo<AnalyzedSensorData | null>(() => {
     if (!selectedPatient || selectedPatient.sensorData.length === 0) {
-      setAnalyzedData(null);
-      return;
+      return null;
     }
+    // The data from mock-data is already analyzed
+    return selectedPatient.sensorData[selectedPatient.sensorData.length - 1];
+  }, [selectedPatient]);
 
-    setIsLoading(true);
-    setAnalyzedData(null); 
-
-    const latestData = selectedPatient.sensorData[selectedPatient.sensorData.length - 1];
-
-    try {
-      const result = await analyzeSensorData({
-        ...latestData,
-        facialAnalysis: latestData.facialAnalysis || 'not available', 
-      });
-      setAnalyzedData({ ...latestData, ...result });
-    } catch (error) {
-      console.error("AI analysis failed:", error);
-      toast({
-        variant: "destructive",
-        title: "AI Analysis Failed",
-        description: "Could not analyze the latest sensor data.",
-      });
-      // In case of error, show the raw data without analysis
-      setAnalyzedData({ 
-        ...latestData,
-        isAnomalous: false,
-        anomalyExplanation: "AI analysis failed.",
-        criticality: 'low'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedPatient, toast]);
-
-  useEffect(() => {
-    handleAnalysis();
-  }, [selectedPatientId, handleAnalysis]);
 
   return (
     <SidebarProvider>
@@ -185,8 +147,7 @@ export default function DashboardPage() {
           {selectedPatient ? (
             <PatientContent
               patient={selectedPatient}
-              analyzedData={analyzedData}
-              isLoading={isLoading}
+              analyzedData={latestAnalyzedData}
             />
           ) : (
             <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">

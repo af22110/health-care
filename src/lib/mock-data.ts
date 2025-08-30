@@ -1,15 +1,19 @@
-import type { Patient, SensorData } from "./types";
+import type { Patient, AnalyzedSensorData } from "./types";
 
-interface RawSensorData {
+// This interface represents the raw data format coming from the Raspberry Pi
+interface RawAnalyzedSensorData {
   date: string;
   time: string;
-  temperature: number;
+  temperature: number; // in Fahrenheit
   humidity: number;
   pulse: number;
   motion: string;
+  isAnomalous: boolean;
+  anomalyExplanation: string;
+  criticality: 'low' | 'medium' | 'high' | string;
 }
 
-const rawSensorDataPat1: RawSensorData[] = [
+const rawSensorDataPat1: RawAnalyzedSensorData[] = [
   {
     date: "2024-07-29",
     time: "18:00:00",
@@ -17,6 +21,9 @@ const rawSensorDataPat1: RawSensorData[] = [
     humidity: 45,
     pulse: 75,
     motion: "active",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   },
   {
     date: "2024-07-29",
@@ -25,6 +32,9 @@ const rawSensorDataPat1: RawSensorData[] = [
     humidity: 46,
     pulse: 78,
     motion: "still",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   },
   {
     date: "2024-07-29",
@@ -33,10 +43,13 @@ const rawSensorDataPat1: RawSensorData[] = [
     humidity: 45,
     pulse: 135,
     motion: "still",
+    isAnomalous: true,
+    anomalyExplanation: "High heart rate detected. Heart rate is 135 bpm, which is above the 120 bpm threshold.",
+    criticality: "high"
   },
 ];
 
-const rawSensorDataPat2: RawSensorData[] = [
+const rawSensorDataPat2: RawAnalyzedSensorData[] = [
   {
     date: "2024-07-29",
     time: "18:00:00",
@@ -44,6 +57,9 @@ const rawSensorDataPat2: RawSensorData[] = [
     humidity: 50,
     pulse: 68,
     motion: "active",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   },
   {
     date: "2024-07-29",
@@ -52,6 +68,9 @@ const rawSensorDataPat2: RawSensorData[] = [
     humidity: 51,
     pulse: 70,
     motion: "active",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   },
   {
     date: "2024-07-29",
@@ -60,10 +79,13 @@ const rawSensorDataPat2: RawSensorData[] = [
     humidity: 50,
     pulse: 72,
     motion: "still",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   },
 ];
 
-const rawSensorDataPat3: RawSensorData[] = [
+const rawSensorDataPat3: RawAnalyzedSensorData[] = [
     {
     date: "2024-07-29",
     time: "22:00:00",
@@ -71,10 +93,13 @@ const rawSensorDataPat3: RawSensorData[] = [
     humidity: 48,
     pulse: 85,
     motion: "limited",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   }
 ];
 
-const rawSensorDataPat4: RawSensorData[] = [
+const rawSensorDataPat4: RawAnalyzedSensorData[] = [
     {
     date: "2024-07-29",
     time: "22:00:00",
@@ -82,17 +107,23 @@ const rawSensorDataPat4: RawSensorData[] = [
     humidity: 47,
     pulse: 80,
     motion: "still",
+    isAnomalous: false,
+    anomalyExplanation: "All vitals appear normal.",
+    criticality: "low"
   }
 ];
 
 
-const processRawData = (rawData: RawSensorData[]): SensorData[] => {
+const processRawData = (rawData: RawAnalyzedSensorData[]): AnalyzedSensorData[] => {
   return rawData.map(d => ({
     timestamp: `${d.date}T${d.time}.000Z`,
     temperature: d.temperature,
     humidity: d.humidity,
     heartRate: d.pulse,
     movement: d.motion,
+    isAnomalous: d.isAnomalous,
+    anomalyExplanation: d.anomalyExplanation,
+    criticality: d.criticality,
   }));
 };
 

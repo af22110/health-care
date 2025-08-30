@@ -5,7 +5,6 @@ import {
   Activity,
   Droplets,
   HeartPulse,
-  Smile,
   Thermometer,
 } from "lucide-react";
 import React from "react";
@@ -14,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
-import type { SensorData, Patient, AnalyzedSensorData } from "@/lib/types";
+import type { Patient, AnalyzedSensorData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MessagingPanel } from "./messaging-panel";
 
@@ -29,12 +28,9 @@ function fahrenheitToCelsius(fahrenheit: number): number {
 
 export function PatientViewContent({ patient }: PatientViewContentProps) {
   // In a real app, this would come from an API call that includes AI analysis
-  const latestData: AnalyzedSensorData = {
-    ...patient.sensorData[patient.sensorData.length - 1],
-    isAnomalous: false, // Default to false for patient view for now
-    anomalyExplanation: "All vitals appear normal.",
-    criticality: "low",
-  };
+  const latestData: AnalyzedSensorData | null = patient.sensorData.length > 0
+  ? patient.sensorData[patient.sensorData.length - 1]
+  : null;
 
   const isAnomalous = latestData?.isAnomalous ?? false;
   const anomalyExplanation = latestData?.anomalyExplanation.toLowerCase() ?? "";
@@ -46,6 +42,21 @@ export function PatientViewContent({ patient }: PatientViewContentProps) {
 
   const tempF = latestData?.temperature ?? 0;
   const tempC = fahrenheitToCelsius(tempF);
+
+  if (!latestData) {
+     return (
+      <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+        <div className="flex flex-col items-center gap-1 text-center">
+          <h3 className="text-2xl font-bold tracking-tight">
+            No sensor data found.
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            We couldn't load your vitals. Please try again later.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Tabs defaultValue="overview" className="w-full">
