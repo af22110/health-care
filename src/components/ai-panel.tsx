@@ -1,6 +1,5 @@
 "use client";
 
-import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies";
 import { summarizePatientDataForDoctors } from "@/ai/flows/summarize-patient-data-for-doctors";
 import { useToast } from "@/hooks/use-toast";
 import type { Anomaly, Patient } from "@/lib/types";
@@ -13,15 +12,15 @@ import { Separator } from "./ui/separator";
 
 interface AIPanelProps {
   patient: Patient;
+  anomaly: Anomaly | null;
+  isAnomalyPending: boolean;
 }
 
-export function AIPanel({ patient }: AIPanelProps) {
+export function AIPanel({ patient, anomaly, isAnomalyPending }: AIPanelProps) {
   const { toast } = useToast();
   const [isSummaryPending, startSummaryTransition] = useTransition();
-  const [isAnomalyPending, startAnomalyTransition] = useTransition();
 
   const [summary, setSummary] = useState<string | null>(null);
-  const [anomaly, setAnomaly] = useState<Anomaly | null>(null);
 
   const handleSummarize = () => {
     startSummaryTransition(async () => {
@@ -39,33 +38,6 @@ export function AIPanel({ patient }: AIPanelProps) {
           variant: "destructive",
           title: "Error",
           description: "Failed to generate patient summary.",
-        });
-      }
-    });
-  };
-
-  const handleAnalyzeAnomaly = () => {
-    startAnomalyTransition(async () => {
-      setAnomaly(null);
-      const latestData = patient.sensorData[patient.sensorData.length - 1];
-      if (!latestData) {
-        toast({
-          variant: "destructive",
-          title: "No Data",
-          description: "No sensor data available to analyze.",
-        });
-        return;
-      }
-
-      try {
-        const result = await analyzeSensorData(latestData);
-        setAnomaly(result);
-      } catch (error) {
-        console.error("Error analyzing sensor data:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to analyze sensor data for anomalies.",
         });
       }
     });
@@ -106,16 +78,6 @@ export function AIPanel({ patient }: AIPanelProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>AI Anomaly Detection</CardTitle>
-          <Button
-            variant="outline"
-            onClick={handleAnalyzeAnomaly}
-            disabled={isAnomalyPending}
-          >
-            {isAnomalyPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Analyze Latest Data
-          </Button>
         </CardHeader>
         <CardContent>
           {isAnomalyPending && (
@@ -163,8 +125,7 @@ export function AIPanel({ patient }: AIPanelProps) {
           ) : (
             !isAnomalyPending && (
               <p className="text-sm text-muted-foreground">
-                Click "Analyze Latest Data" to check the most recent sensor
-                reading for potential anomalies.
+                Patient data is being analyzed for anomalies...
               </p>
             )
           )}

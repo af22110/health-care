@@ -7,13 +7,16 @@ import {
   Smile,
   Thermometer,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { AIPanel } from "./ai-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
-import type { Patient } from "@/lib/types";
+import type { Anomaly, Patient } from "@/lib/types";
+import { analyzeSensorData } from "@/ai/flows/analyze-sensor-data-for-anomalies";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 interface PatientContentProps {
   patient: Patient;
@@ -21,6 +24,37 @@ interface PatientContentProps {
 
 export function PatientContent({ patient }: PatientContentProps) {
   const latestData = patient.sensorData[patient.sensorData.length - 1];
+  const { toast } = useToast();
+  const [isAnomalyPending, startAnomalyTransition] = useTransition();
+  const [anomaly, setAnomaly] = useState<Anomaly | null>(null);
+
+  useEffect(() => {
+    const handleAnalyzeAnomaly = () => {
+      if (!patient || !latestData) return;
+
+      startAnomalyTransition(async () => {
+        setAnomaly(null);
+        try {
+          const result = await analyzeSensorData(latestData);
+          setAnomaly(result);
+        } catch (error) {
+          console.error("Error analyzing sensor data:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to analyze sensor data for anomalies.",
+          });
+        }
+      });
+    };
+    handleAnalyzeAnomaly();
+  }, [patient, latestData, toast]);
+
+  const isAnomalousMetric = (metric: string): boolean => {
+    if (!anomaly || !anomaly.isAnomalous) return false;
+    const explanation = anomaly.anomalyExplanation.toLowerCase();
+    return explanation.includes(metric.toLowerCase());
+  };
 
   return (
     <Tabs defaultValue="overview" className="w-full">
@@ -51,7 +85,12 @@ export function PatientContent({ patient }: PatientContentProps) {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className={cn(
+              isAnomalousMetric("heart rate") &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Heart Rate</CardTitle>
               <HeartPulse className="h-4 w-4 text-muted-foreground" />
@@ -60,12 +99,15 @@ export function PatientContent({ patient }: PatientContentProps) {
               <div className="text-2xl font-bold">
                 {latestData?.heartRate ?? "N/A"} bpm
               </div>
-              <p className="text-xs text-muted-foreground">
-                Latest reading
-              </p>
+              <p className="text-xs text-muted-foreground">Latest reading</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className={cn(
+              isAnomalousMetric("temperature") &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Temperature
@@ -81,7 +123,12 @@ export function PatientContent({ patient }: PatientContentProps) {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className={cn(
+              isAnomalousMetric("humidity") &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Humidity</CardTitle>
               <Droplets className="h-4 w-4 text-muted-foreground" />
@@ -93,7 +140,12 @@ export function PatientContent({ patient }: PatientContentProps) {
               <p className="text-xs text-muted-foreground">Ambient Humidity</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className={cn(
+              (isAnomalousMetric("facial") || isAnomalousMetric("expression")) &&
+                "bg-destructive/10 border-destructive"
+            )}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Facial Analysis
@@ -162,7 +214,7 @@ export function PatientContent({ patient }: PatientContentProps) {
         </div>
       </TabsContent>
       <TabsContent value="ai">
-        <AIPanel patient={patient} />
+        <AIPanel patient={patient} anomaly={anomaly} isAnomalyPending={isAnomalyPending} />
       </TabsContent>
     </Tabs>
   );
