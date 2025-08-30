@@ -33,6 +33,20 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "distressed",
       }
     ],
+    messages: [
+        {
+            id: 'msg1',
+            sender: 'doctor',
+            content: 'Hello John, I noticed your heart rate was a bit high earlier. Are you feeling okay?',
+            timestamp: '2024-07-29T22:05:00.000Z',
+        },
+        {
+            id: 'msg2',
+            sender: 'patient',
+            content: 'Hi Dr. Angelica. Yes, I was feeling a bit anxious. I\'m feeling better now, thank you for checking in.',
+            timestamp: '2024-07-29T22:10:00.000Z',
+        }
+    ]
   },
   {
     id: "pat2",
@@ -66,6 +80,14 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       }
     ],
+    messages: [
+        {
+            id: 'msg3',
+            sender: 'doctor',
+            content: 'Hi Jane, your vitals look stable. Keep up the great work!',
+            timestamp: '2024-07-29T19:00:00.000Z',
+        }
+    ]
   },
   {
     id: "pat3",
@@ -83,6 +105,7 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "neutral",
       }
     ],
+    messages: []
   },
   {
     id: "pat4",
@@ -100,5 +123,6 @@ export const mockPatients: Patient[] = [
         facialAnalysis: "confused",
       }
     ],
+    messages: []
   },
 ];

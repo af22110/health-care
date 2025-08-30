@@ -3,6 +3,7 @@
 import {
   Droplets,
   HeartPulse,
+  MessageSquare,
   Smile,
   Thermometer,
 } from "lucide-react";
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { VitalsChart } from "./vitals-chart";
 import type { Anomaly, Patient } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { MessagingPanel } from "./messaging-panel";
 
 interface PatientContentProps {
   patient: Patient;
@@ -32,9 +34,10 @@ export function PatientContent({ patient, anomaly, isAnomalyPending }: PatientCo
 
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="vitals">Vitals History</TabsTrigger>
+        <TabsTrigger value="messages">Messages</TabsTrigger>
         <TabsTrigger value="ai">AI Analysis</TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
@@ -186,6 +189,9 @@ export function PatientContent({ patient, anomaly, isAnomalyPending }: PatientCo
             </CardContent>
           </Card>
         </div>
+      </TabsContent>
+       <TabsContent value="messages">
+        <MessagingPanel patient={patient} currentUser="doctor" />
       </TabsContent>
       <TabsContent value="ai">
         <AIPanel patient={patient} anomaly={anomaly} isAnomalyPending={isAnomalyPending} />
