@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 import { GuardianAngelLogo } from "@/components/icons";
+import { JsonDisplay } from "@/components/json-display";
 
 export default function HomePage() {
   return (
@@ -22,6 +23,9 @@ export default function HomePage() {
           <Button asChild variant="outline" size="lg">
             <Link href="/patient">Patient View</Link>
           </Button>
+        </div>
+        <div className="mt-8 w-full max-w-2xl">
+          <JsonDisplay />
         </div>
       </div>
     </div>
