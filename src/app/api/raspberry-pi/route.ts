@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   // Raspberry Piで起動したサーバーのURL
   // <RASPBERRY_PI_IP_ADDRESS> を先ほどメモしたIPアドレスに置き換えてください。
-  const RASPBERRY_PI_URL = 'http://<RASPBERRY_PI_IP_ADDRESS>:8000/data';
+  const RASPBERRY_PI_URL = 'http://10.136.130.13:8000/data';
 
   try {
     // Raspberry Piのサーバーにデータをリクエスト
